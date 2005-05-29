@@ -2,13 +2,14 @@ package Text::Emoticon::MSN;
 
 use strict;
 use vars qw($VERSION);
-$VERSION = '0.01';
+$VERSION = '0.02';
 
 use vars qw(%Default %EmoticonMap $EmoticonRE);
 
 %Default = (
     imgbase => ".",
     xhtml   => 1,
+    strict  => 0,
     class   => undef,
 );
 
@@ -137,8 +138,11 @@ sub new {
 sub filter {
     my($self, $text) = @_;
     return unless defined $text;
-
-    $text =~ s{$EmoticonRE}{$self->do_filter($EmoticonMap{$1})}eg;
+    if ($self->{strict}) {
+      $text =~ s{(?<!\w)$EmoticonRE(?!\w)}{$self->do_filter($EmoticonMap{$1})}eg;
+    } else {
+      $text =~ s{$EmoticonRE}{$self->do_filter($EmoticonMap{$1})}eg;
+    }
     return $text;
 }
 
@@ -147,7 +151,7 @@ sub do_filter {
     my $class = $self->{class} ? qq( class="$self->{class}") : "";
     my $xhtml = $self->{xhtml} ? qq( /) : "";
 
-    return qq(<img src="$self->{imgbase}/$icon"$class$xhtml>)
+    return qq(<img src="$self->{imgbase}/$icon"$class$xhtml>); 
 }
 
 1;
@@ -208,7 +212,12 @@ CSS class used in C<img> tags. It defaults to nothing.
 will print:
 
   <img src="blah.gif" class="emo" />
+ 
+=item strict
 
+Whether it will disable smileys with space in them.
+defaults to 0.
+ 
 =back
 
 =item filter

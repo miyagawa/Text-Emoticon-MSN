@@ -15,6 +15,8 @@ my @Tests = (
       qq(blah <img src="./wink_smile.gif">blah <img src="./clock.gif">) ],
     [ { class => "emo" },
       qq(blah <img src="./wink_smile.gif" class="emo" />blah <img src="./clock.gif" class="emo" />) ],
+    [ { strict => 1 },
+      qq!blah ;-)blah <img src="./clock.gif" />! ],
 );
 
 plan tests => scalar(@Tests);
