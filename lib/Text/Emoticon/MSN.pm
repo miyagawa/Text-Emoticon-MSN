@@ -1,15 +1,14 @@
 package Text::Emoticon::MSN;
 
 use strict;
-use vars qw($VERSION);
-$VERSION = '0.03';
+our $VERSION = '0.04';
 
 use Text::Emoticon 0.03;
 use base qw(Text::Emoticon);
 
 sub default_config {
     return {
-        imgbase => "http://messenger.msn.com/Resouce/emoticons",
+        imgbase => "http://messenger.msn.com/Resource/emoticons",
         xhtml   => 1,
         strict  => 0,
         class   => undef,
@@ -172,7 +171,7 @@ Constructs new Text::Emoticon::MSN object. It accepts two options:
 =item imgbase
 
 Base URL where icon gif files are located. It defaults to
-"http://messenger.msn.com/Resouce/emoticons" (the MSN site) but I
+"http://messenger.msn.com/Resource/emoticons" (the MSN site) but I
 don't recommend that, as there's a possibility MSN will ban your site.
 
 =item xhtml
