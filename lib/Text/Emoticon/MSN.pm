@@ -2,16 +2,19 @@ package Text::Emoticon::MSN;
 
 use strict;
 use vars qw($VERSION);
-$VERSION = '0.02';
+$VERSION = '0.03';
 
-use vars qw(%Default %EmoticonMap $EmoticonRE);
+use Text::Emoticon 0.03;
+use base qw(Text::Emoticon);
 
-%Default = (
-    imgbase => ".",
-    xhtml   => 1,
-    strict  => 0,
-    class   => undef,
-);
+sub default_config {
+    return {
+        imgbase => "http://messenger.msn.com/Resouce/emoticons",
+        xhtml   => 1,
+        strict  => 0,
+        class   => undef,
+    };
+}
 
 # Table autogernerated from Emoticons.aspx using
 # $_ = join "", <>;
@@ -21,7 +24,7 @@ use vars qw(%Default %EmoticonMap $EmoticonRE);
 #   $print qq('$t' => "$icon",\n) if $3;
 # }
 
-%EmoticonMap = (
+__PACKAGE__->register_subclass({
 ':-)' => "regular_smile.gif",
 ':)' => "regular_smile.gif",
 ':-D' => "teeth_smile.gif",
@@ -123,36 +126,7 @@ use vars qw(%Default %EmoticonMap $EmoticonRE);
 '(st)' => "66_66.gif",
 '(li)' => "73_73.gif",
 '(mo)' => "69_69.gif",
-
-);
-
-my $re = join "|", map quotemeta($_), keys %EmoticonMap;
-$EmoticonRE = qr/($re)/;
-
-sub new {
-    my($class, %opt) = @_;
-    my %attr = (%Default, %opt);
-    bless \%attr, $class;
-}
-
-sub filter {
-    my($self, $text) = @_;
-    return unless defined $text;
-    if ($self->{strict}) {
-      $text =~ s{(?<!\w)$EmoticonRE(?!\w)}{$self->do_filter($EmoticonMap{$1})}eg;
-    } else {
-      $text =~ s{$EmoticonRE}{$self->do_filter($EmoticonMap{$1})}eg;
-    }
-    return $text;
-}
-
-sub do_filter {
-    my($self, $icon) = @_;
-    my $class = $self->{class} ? qq( class="$self->{class}") : "";
-    my $xhtml = $self->{xhtml} ? qq( /) : "";
-
-    return qq(<img src="$self->{imgbase}/$icon"$class$xhtml>); 
-}
+});
 
 1;
 __END__
@@ -197,7 +171,9 @@ Constructs new Text::Emoticon::MSN object. It accepts two options:
 
 =item imgbase
 
-Base URL where icon gif files are located. It defaults to ".", meaning it links to images in current directory. Though you can use "http://messenger.msn.com/Resouce/emoticons" (the MSN site) as C<imgbase> value, I don't recommend that, as there's a possibility MSN will ban your site.
+Base URL where icon gif files are located. It defaults to
+"http://messenger.msn.com/Resouce/emoticons" (the MSN site) but I
+don't recommend that, as there's a possibility MSN will ban your site.
 
 =item xhtml
 
